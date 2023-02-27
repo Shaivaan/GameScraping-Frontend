@@ -1,0 +1,22 @@
+.itemsParent{
+    border: 2px dashed #183A1D;
+    border-radius: 10px;
+    background-color: #E1EEDD;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.parentBox{
+    width: 65%;
+    margin: auto;
+}
+
+.progressParent{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 90vh;
+    width: 100%;
+    align-items: center;
+}
+
