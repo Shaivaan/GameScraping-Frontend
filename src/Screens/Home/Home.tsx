@@ -32,7 +32,6 @@ function Home() {
 
   return (
     <>
-      <Box>Home</Box>
       <Box className={styles.parentBox}>
         <Navbar />
 

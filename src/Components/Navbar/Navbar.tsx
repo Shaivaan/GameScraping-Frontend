@@ -14,6 +14,7 @@ function Navbar() {
   const [searchData, setSearchData] = useState<any>([]);
   const [dataLoader, setDataLoader] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [isErase,setIsErase] = useState(false);
 
   const getSearchGames = (searchValue: any) => {
     fetch(`${API}/search/${searchValue}`)
@@ -30,10 +31,15 @@ function Navbar() {
       });
   };
 
-  const deboucerFunction = (searchValue: any) => {
-    setSearchValue(searchValue);
-
-    if (searchValue.trim().length == 0) {
+  const deboucerFunction = (e:any) => {
+    if(e.keyCode == 8 && isErase){
+      cancelSearchihng();
+      return
+    }
+    const value = e.target.value;
+    setSearchValue(value);
+    if (value.trim().length == 0) {
+      setIsErase(false);
       clearInterval(debouncer);
       setDataLoader(false);
       setSearchData([]);
@@ -43,17 +49,25 @@ function Navbar() {
     setDataLoader(true);
     debouncer && clearTimeout(debouncer);
     debouncer = setTimeout(() => {
-      getSearchGames(searchValue);
+      getSearchGames(value);
     }, debounceTime);
   };
+
+
+   const cancelSearchihng=()=>{
+      setSearchValue("");
+      setIsErase(false);
+      clearInterval(debouncer);
+      setDataLoader(false);
+      setSearchData([]);
+   }
 
 
   return (
     <Box>
       <TextField
-        onChange={(e: any) => {
-          deboucerFunction(e.target.value);
-        }}
+        onChange={(e:any)=>{setSearchValue(e.target.value)}}
+        onKeyUp={deboucerFunction}
         value={searchValue}
         autoComplete="off"
         InputProps={{
@@ -65,25 +79,30 @@ function Navbar() {
         }}
         fullWidth
       />
-      <Box className={style.searchBox}>
+
+      
+      <Box >
         {dataLoader ? (
-          <Box className={style.progress}>
+          <Box className={`${style.progress} ${style.searchBox}`}>
             <CircularProgress />
           </Box>
         ) : (
-          searchData.map((el: any, i: number) => {
+          <Box className={searchData.length !=0 ? style.searchBox : ""}>
+          {searchData.map((el: any, i: number) => {
             return (
-              <EachOption key={i} changeValue={setSearchValue} item={el} />
+              <EachOption key={i} changeValue={setSearchValue} item={el} eraser={setIsErase}/>
             );
-          })
+          })}
+          </Box>
         )}
       </Box>
     </Box>
   );
 }
 
-const EachOption = ({ item, changeValue }: any) => {
+const EachOption = ({ item, changeValue,eraser }: any) => {
   const handleChange = () => {
+    eraser(true);
     changeValue(item.text);
   };
 
